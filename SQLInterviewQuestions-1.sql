@@ -1,5 +1,5 @@
 
-use talenddemo;
+
 set GLOBAL local_infile=1;
 
 SET SQL_SAFE_UPDATES = 0;
