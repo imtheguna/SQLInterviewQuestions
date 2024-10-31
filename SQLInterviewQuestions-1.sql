@@ -1,5 +1,3 @@
-
-
 set GLOBAL local_infile=1;
 
 SET SQL_SAFE_UPDATES = 0;
@@ -129,3 +127,52 @@ SELECT e.employee_id,e.first_name,e.last_name, e.salary AS employee_salary, m.sa
 FROM employees_details e
 JOIN employees_details m ON e.manager_id = m.employee_id
 WHERE e.salary > m.salary;
+
+/* If all columns are the same in duplicate rows, creating a temporary table without duplicates, dropping the original table, 
+and reloading the data back from the temporary table is a straightforward approach.
+*/
+
+create table product(
+id int,
+name varchar(100)
+);
+
+insert into product(id,name) values(1,'Phone'),(1,'Phone'),(1,'Phone'),(2,'CD'),(3,'Laptop');
+
+select * from product;
+
+create table product_temp(
+id int,
+name varchar(100)
+);
+
+insert into product_temp select distinct * from product;
+
+delete from product;
+insert into product select * from product_temp;
+
+select * from product;
+
+/*If each row has a unique key (like id), 
+we can identify duplicates based on the non-key columns and delete the duplicates while keeping one instance of each unique row.
+*/
+create table product_details(
+product_key int,
+id int,
+name varchar(100)
+);
+delete from product_details;
+
+insert into product_details(product_key,id,name) values(1,1,'Phone'),(2,1,'Phone'),(3,1,'Phone'),(4,2,'CD'),(5,3,'Laptop');
+
+with temp as(
+select product_key,id,name ,ROW_NUMBER() OVER (PARTITION BY name,id ORDER BY product_key) AS row_num from product_details
+)
+DELETE FROM product_details
+WHERE product_key IN (
+    SELECT product_key
+    FROM temp
+    WHERE row_num > 1
+);
+
+select * from product_details
