@@ -71,4 +71,29 @@ SELECT TITLE,NAME FROM TEMP WHERE SALARY_RANK =1
 GROUP BY S.USERID,S.SessionDate,u.UserName
 HAVING COUNT(O.ORDER_ID) >0
 
+--Write a query that calculates the difference between the highest salaries in the marketing and engineering departments.
+
+
+CREATE TABLE employee (id INT,name VARCHAR(50),salary INT,department_id INT);
+CREATE TABLE dept (id INT,department VARCHAR(50));
+
+INSERT INTO employee (id, name, salary, department_id) 
+VALUES(1, 'Guna', 28516, 4),
+(2, 'Pavi', 33575, 1),
+(3, 'Padma', 34902, 1),
+(7, 'Arnu', 48187, 3),
+(4, 'Arnu', 48187, 4),
+(5, 'Hari', 22681, 4),
+(6, 'Joe', 37710, 4)
+
+select * from employee
+select * from dept
+
+INSERT INTO dept (id, department) VALUES(1, 'engineering'),(2, 'HR'),(3, 'operation'),(4, 'marketing');
+
+select abs(max(case when d.department = 'marketing' then e.salary end) - max(case when d.department = 'engineering' then e.salary end)) as diff_salary
+from employee e
+join dept d on e.department_id =d.id
+
+
 
