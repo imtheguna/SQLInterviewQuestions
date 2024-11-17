@@ -48,6 +48,26 @@ ON S.USERID = O.USERID
 AND S.SessionDate=O.ORDER_DATE
 JOIN users u
 on u.UserId=s.UserId
+
+--Find the Job of the highest paid employees.
+
+CREATE TABLE employees(id INT PRIMARY KEY,name VARCHAR(50), salary INT,department VARCHAR(50),title VARCHAR(200));
+
+INSERT INTO employees(id, name, salary, department,TITLE) 
+VALUES(1, 'Guna	', 90000, 'Engineering','Engineer'),
+(2, 'Arun', 130000, 'Marketing','Marketing Manager'),
+(3, 'Hari', 130000, 'Sales','Sales Manager'),
+(4, 'Pavi', 85000, 'Engineering','Junior Engineer'),
+(5, 'Joe', 97000, 'Sales','Senior Salesperson');
+
+select * from employees
+
+
+SELECT TITLE,NAME FROM employees WHERE SALARY = (SELECT MAX(SALARY) FROM employees );
+
+WITH TEMP AS (
+SELECT TITLE,NAME, RANK() OVER(ORDER BY SALARY DESC) SALARY_RANK FROM employees)
+SELECT TITLE,NAME FROM TEMP WHERE SALARY_RANK =1
 GROUP BY S.USERID,S.SessionDate,u.UserName
 HAVING COUNT(O.ORDER_ID) >0
 
